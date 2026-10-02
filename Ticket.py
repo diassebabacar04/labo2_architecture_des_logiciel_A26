@@ -1,30 +1,45 @@
 from datetime import datetime
+from contenu import Contenu
+
 
 class Ticket:
-    def __init__(self, ticket_id, title, description, priority="Normal"):
+
+    def __init__(self, ticket_id, title, priority="Normal"):
         self.ticketID = ticket_id
         self.title = title
-        self.description = description
-        self.status = "OUVERT"  # le ticket commence son cycle de vie dans le statut ouvert une fois crée
+        self.status = "OUVERT"
         self.priority = priority
         self.creationDate = datetime.now()
         self.updateDate = datetime.now()
 
-        self.comments = []  # liste vide qui va contenir les commentaires ajoutés au fil du temps
-        self.assignedTo = None  # aucun développeur assigné au départ
+        self.comments = []
+        self.assignedTo = None
 
-    def assignTo(self, user):  # Relation "assigns" du diagramme : on garde une référence vers l'utilisateur assigné
+        # La description est composée de plusieurs contenus
+        self.contenus = []
+
+    def assignTo(self, user):
         self.assignedTo = user
-        self.status = "ASSIGNÉ"  # le ticket passe de statut ouvert a assigné
-        self.updateDate = datetime.now()  # on trace le moment de l'assignation
-
-    def updateStatus(self, status):  # Méthode générique pour changer le statut (OUVERT, ASSIGNÉ, VALIDATION, TERMINÉ)
-        self.status = status  # statut est égale a statut actuelle
+        self.status = "ASSIGNÉ"
         self.updateDate = datetime.now()
 
-    def addComment(self, comment):  # ajoute un commentaire a la liste
+    def updateStatus(self, status):
+        self.status = status
+        self.updateDate = datetime.now()
+
+    def addComment(self, comment):
         self.comments.append(comment)
+        self.updateDate = datetime.now()
+
+    def addContenu(self, contenu):
+        if isinstance(contenu, Contenu):
+            self.contenus.append(contenu)
+            self.updateDate = datetime.now()
+        else:
+            print("Erreur : le contenu doit être de type Contenu.")
 
     def __str__(self):
-        # Représentation lisible, appelée automatiquement par print(ticket)
-        return f"Ticket #{self.ticketID} - {self.title} [{self.status}] (priorité: {self.priority})"
+        return (
+            f"Ticket #{self.ticketID} - {self.title} "
+            f"[{self.status}] (priorité: {self.priority})"
+        )
